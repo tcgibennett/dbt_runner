@@ -91,3 +91,5 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 #RUN git config --global user.name GIT_AUTHOR_NAME
 COPY ./runner /go/bin
 WORKDIR $GOPATH
+
+ENTRYPOINT ["/go/bin/runner"]

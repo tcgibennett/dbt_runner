@@ -28,8 +28,10 @@ test:
 .PHONY: build-docker # Build Docker image
 build-docker:
 	$(shell $(MAKE) build_linux)
-	@docker build -t talend/dbt_runner:$(shell $(MAKE) version) -f Dockerfile .
-	@docker tag talend/dbt_runner:$(shell $(MAKE) version) talend/dbt_runner:latest
+	@docker build -t 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:$(shell $(MAKE) version) -f Dockerfile .
+	@docker tag 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:$(shell $(MAKE) version) 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:latest
+	@aws --profile incubation ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 583690682261.dkr.ecr.us-east-2.amazonaws.com
+	@docker push 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner
 
 .PHONY: help # Generate list of goals with descriptions
 help:
