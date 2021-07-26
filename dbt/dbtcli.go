@@ -19,7 +19,15 @@ func New(path string) *Dbt {
 }
 
 func (dbt *Dbt) Compile(args ...string) *messages.Response {
-	subcmd := []string{"compile"}
+	return dbtcli("compile", args...)
+}
+
+func (dbt *Dbt) Execute(args ...string) *messages.Response {
+	return dbtcli("run", args...)
+}
+
+func dbtcli(command string, args ...string) *messages.Response {
+	subcmd := []string{command}
 	args = append(subcmd, args...)
 	cmd := exec.Command("dbt", args...)
 	var out bytes.Buffer
@@ -32,15 +40,15 @@ func (dbt *Dbt) Compile(args ...string) *messages.Response {
 		}
 	}
 
-	if strings.Contains("ERROR", out.String()) {
+	if strings.Contains("Error", out.String()) {
 		return &messages.Response{
-			Status: "Error",
+			Status:  "Error",
 			Message: out.String(),
 		}
 	}
 
 	return &messages.Response{
-		Status: "Success",
+		Status:  "Success",
 		Message: out.String(),
 	}
 }

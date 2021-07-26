@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"stitchdata.com/dbt/runner/dbt"
+	"stitchdata.com/dbt/runner/messages"
 )
 
 var e *echo.Echo
@@ -17,10 +19,17 @@ func test(c echo.Context) error {
 }
 
 func GetProfiles(c echo.Context) error {
-	result := "{\"hello\":\"world\"}"
+	response := messages.Response{
+		Status:  "Success",
+		Message: "Hello World",
+	}
+	result, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println(c.Param("account_id"))
-
-	return c.JSON(http.StatusOK, result)
+	fmt.Println(string(result))
+	return c.JSON(http.StatusOK, string(result))
 }
 
 func PostCompile(c echo.Context) error {
@@ -29,7 +38,24 @@ func PostCompile(c echo.Context) error {
 	//response := d.Compile("--project-dir", "/"+d.Path+"/dbt_test")
 	response := d.Compile("--project-dir", "/"+accountid+"/dbt_test", "--profiles-dir", "/"+accountid)
 
-	return c.String(http.StatusOK, response.Message)
+	if response.Status == "Success" {
+		return c.String(http.StatusOK, response.Message)
+	} else {
+		return c.String(http.StatusNotAcceptable, response.Message)
+	}
+}
+
+func PostExecute(c echo.Context) error {
+	accountid := c.Param("account_id")
+	d = dbt.New(accountid)
+
+	response := d.Execute("--project-dir", "/"+accountid+"/dbt_test", "--profiles-dir", "/"+accountid)
+
+	if response.Status == "Success" {
+		return c.String(http.StatusOK, response.Message)
+	} else {
+		return c.String(http.StatusNotAcceptable, response.Message)
+	}
 }
 
 func main() {
@@ -41,6 +67,7 @@ func main() {
 	e.GET("/test", test)
 	e.GET("/profiles/:account_id", GetProfiles)
 	e.POST("/compile/:account_id", PostCompile)
+	e.POST("/execute/:account_id", PostExecute)
 	fmt.Println("Listening for requests on port :8080")
 
 	e.Logger.Fatal(e.Start(":8080"))
