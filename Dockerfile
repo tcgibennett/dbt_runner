@@ -8,7 +8,14 @@ FROM ubuntu:latest
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN echo "alias env_dbt='source ~/dbt-env/bin/activate'" >> ~/.bashrc
+#RUN mkdir -p /usr/share/zoneinfo/America
+#RUN mkdir -p /usr/share/zoneinfo/US
+#RUN ls -la /usr/share/zoneinfo/America
+#COPY ./New_York /usr/share/zoneinfo/America/New_York
+#RUN ln -s /usr/share/zoneinfo/America/New_York /usr/share/zoneinfo/US/Eastern
+#RUN ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 RUN apt-get update && apt-get install -y curl wget gpg git libpq-dev python-dev python3-pip python3.8-venv
+#RUN apt-get install -y kmod s3fs 
 RUN apt-get remove python-cffi
 RUN pip install --upgrade cffi
 RUN pip install cryptography~=3.4
@@ -19,6 +26,9 @@ RUN mkdir /1234567890
 COPY ./profiles.yml /1234567890/profiles.yml
 COPY ./engineering-152721-02eb6bc8bca9.json /1234567890/engineering-152721-02eb6bc8bca9.json
 RUN mkdir /1234567890/dbt_test
+#COPY ./s3fs-creds /.s3fs-creds
+#RUN chmod 600 /.s3fs-creds && mkdir /s3fs
+#RUN s3fs dbt-incubation /s3fs -o passwd_file=/.s3fs-creds
 RUN cd /1234567890 && git clone https://github.com/tcgibennett/dbt_test.git
 RUN dbt --version
 # set up nsswitch.conf for Go's "netgo" implementation

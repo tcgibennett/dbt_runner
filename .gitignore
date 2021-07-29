@@ -4,3 +4,5 @@ profiles.yml
 engineering-152721-02eb6bc8bca9.json
 dbt_test/
 runner
+s3fs-creds
+New_York

@@ -25,6 +25,13 @@ install:
 test:
 	@go test -v ./...
 
+.PHONY: build-docker-local # Build Docker image
+build-docker-local:
+	$(shell $(MAKE) build_linux)
+	@docker build -t 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:$(shell $(MAKE) version) -f Dockerfile .
+	@docker tag 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:$(shell $(MAKE) version) 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:latest
+	@docker run -p 3080:8080 583690682261.dkr.ecr.us-east-2.amazonaws.com/dbt-runner:latest
+	
 .PHONY: build-docker # Build Docker image
 build-docker:
 	$(shell $(MAKE) build_linux)

@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"stitchdata.com/dbt/runner/dbt"
 	"stitchdata.com/dbt/runner/messages"
+	"stitchdata.com/dbt/runner/rest"
 )
 
 var e *echo.Echo
@@ -65,9 +66,11 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.GET("/test", test)
+	e.GET("/compiled/sql/:account_id", rest.GetCompiledSQL)
 	e.GET("/profiles/:account_id", GetProfiles)
 	e.POST("/compile/:account_id", PostCompile)
 	e.POST("/execute/:account_id", PostExecute)
+	e.POST("/create/project/:account_id", rest.CreateProject)
 	fmt.Println("Listening for requests on port :8080")
 
 	e.Logger.Fatal(e.Start(":8080"))
