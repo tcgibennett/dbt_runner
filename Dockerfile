@@ -25,11 +25,11 @@ RUN pip install dbt
 RUN mkdir /1234567890
 COPY ./profiles.yml /1234567890/profiles.yml
 COPY ./engineering-152721-02eb6bc8bca9.json /1234567890/engineering-152721-02eb6bc8bca9.json
-RUN mkdir /1234567890/dbt_test
+#RUN mkdir /1234567890/dbt_test
 #COPY ./s3fs-creds /.s3fs-creds
 #RUN chmod 600 /.s3fs-creds && mkdir /s3fs
 #RUN s3fs dbt-incubation /s3fs -o passwd_file=/.s3fs-creds
-RUN cd /1234567890 && git clone https://github.com/tcgibennett/dbt_test.git
+#RUN cd /1234567890 && git clone https://github.com/tcgibennett/dbt_test.git
 RUN dbt --version
 # set up nsswitch.conf for Go's "netgo" implementation
 # - https://github.com/golang/go/blob/go1.9.1/src/net/conf.go#L194-L275
